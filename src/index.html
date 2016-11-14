@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+</body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+    require(['../bower_components/mnist/dist/mnist.js', 'javascripts/amba.js'], function () {
+        require(['javascripts/main.js'], function () {
+            alert('done');
+        });
+    });
+</script>
