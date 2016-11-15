@@ -18,7 +18,7 @@ function getW (n, k, init) {
         w[i] = new Array (n);
         for (var j=0; j<n; j++) {
             if (init)
-                w[i][j] = init
+                w[i][j] = init;
             else
                 w[i][j] = Math.random();
         }

@@ -31,16 +31,18 @@ ans[0].text('Answer');
 /** initial setting **/
 
 var timeStep = 500, rep = 10, each = 100;
-for (var j=0; j<rep; j++) {
+
+for (var j=0; j<=rep; j++) {
     (function (i) {setTimeout(function () {
-        $('#status').text('Training... ' + i*each + '/' + rep*each);
-        trainAllUsingBatch(each,batch,w1,b1);
-        if (i===rep-1) {
+        if (i<rep) {
+            $('#status').text('Training... ' + i*each + '/' + rep*each);
+            trainAllUsingBatch(each,batch,w1,b1);
+        } else {
             $('#status').text('Validating...');
             var result = test(sizeTest);
             setTimeout(function () {
                 $('#status').text('Done.\nAcuracy is ' + Math.round(result*100) +'% with ' + sizeTest + ' validation sets');
-            }, 300);
+            }, 2*timeStep);
         }
     },i*timeStep)})(j)
 }
