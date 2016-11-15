@@ -74,19 +74,6 @@ function sigmoid_prime(z) {
     return sigmoid(z)*(1-sigmoid(z));
 }
 
-function softmax (y) {
-    var res = new Array(10);
-    var sum = 0;
-    for (var i=0; i<10; i++) {
-        res[i] = Math.exp(y[i]);
-        sum += res[i];
-    }
-    for (i=0; i<10; i++) {
-        res[i] = res[i]/sum;
-    }
-    return res;
-}
-
 function maxIdx (y) {
     var max = -1, idx = -1;
     for (var i=0; i<y.length; i++) {
@@ -121,15 +108,19 @@ function getB (k) {
     return b;
 }
 
-// predict
-function getSolution (cur) {
-    var sol = new Array(10);
+function softmax (y) {
+    var res = new Array(10);
+    var sum = 0;
     for (var i=0; i<10; i++) {
-        sol[i] = 0;
+        res[i] = Math.exp(y[i]);
+        sum += res[i];
     }
-    sol[cur] = 1;
-    return sol;
+    for (i=0; i<10; i++) {
+        res[i] = res[i]/sum;
+    }
+    return res;
 }
+
 // from given x and w, return y
 function model (x, w, b) {
     var y = new Array(10);
@@ -143,8 +134,6 @@ function model (x, w, b) {
 }
 
 function train (sol, x, w, b) {
-    // var x = mn(row,col), i, j;
-    // var sol = getSolution(col);
     var y = model(x, w, b);
     for (var i=0; i<w.length; i++) {
         for (var j=0; j<w[i].length; j++) {
@@ -154,26 +143,13 @@ function train (sol, x, w, b) {
     }
 }
 
-/** default parameters **/
-var size = 28, k = 10;
-var alpha = 0.1; // learning rate
-var i,j;
-var w1 = getW(size*size,k);
-var b1 = getB(k);
-var sizeTraining = 8000, sizeTest = 2000;
-
-var set = mnist.set(sizeTraining, sizeTest);
-
-var trainingSet = set.training;
-var testSet = set.test;
-sizeTest = testSet.length
-console.log(sizeTest);
-
-// DO TRAINING
-for (i=0; i<sizeTraining; i++) {
-    var x = trainingSet[i].input;
-    var sol = trainingSet[i].output;
-    train(sol, x, w1, b1);
+function trainAll (sizeTraining, w, b) {
+    var x, sol;
+    for (var i=0; i<sizeTraining; i++) {
+        x = trainingSet[i].input;
+        sol = trainingSet[i].output;
+        train(sol, x, w, b);
+    }
 }
 
 function test (sizeTest) {
@@ -187,5 +163,22 @@ function test (sizeTest) {
     }
     return cnt/sizeTest;
 }
+
+
+/** default parameters **/
+var size = 28, k = 10;
+var alpha = 0.01; // learning rate
+var w1 = getW(size*size,k);
+var b1 = getB(k);
+
+// divide all dataset into traing and test sets
+var sizeTraining = 8000, sizeTest = 2000;
+var set = mnist.set(sizeTraining, sizeTest);
+var trainingSet = set.training;
+var testSet = set.test;
+sizeTest = testSet.length;
+
+
+trainAll(sizeTraining, w1, b1);
 var acuracy = test(sizeTest);
 alert('acurace is ' + Math.round(acuracy*100) +'% with ' + sizeTest + ' validation sets');
