@@ -26,6 +26,7 @@ Tag.prototype.remove = function () {
 function mn(row, col) {
     return mnist[col].range(row, row)[0];
 }
+
 function showDigit (row, col) {
     var cv = tag('canvas');
     var canvas = cv.$.get(0);
@@ -86,6 +87,17 @@ function softmax (y) {
     return res;
 }
 
+function maxIdx (y) {
+    var max = -1, idx = -1;
+    for (var i=0; i<y.length; i++) {
+        if (max < y[i]) {
+            max = y[i];
+            idx = i;
+        }
+    }
+    return idx;
+}
+
 
 /** initialize model **/
 
@@ -121,55 +133,59 @@ function getSolution (cur) {
 // from given x and w, return y
 function model (x, w, b) {
     var y = new Array(10);
-    for (i=0; i<w.length; i++) {
+    for (var i=0; i<w.length; i++) {
         y[i] = b[i];
-        for (j=0; j<w[i].length; j++) {
+        for (var j=0; j<w[i].length; j++) {
             y[i] += w[i][j] * x[j];
         }
     }
     return softmax(y);
 }
 
-function train (row, col, w, b) {
-    var x = mn(row,col), i, j;
-    var sol = getSolution(col);
+function train (sol, x, w, b) {
+    // var x = mn(row,col), i, j;
+    // var sol = getSolution(col);
     var y = model(x, w, b);
-    for (i=0; i<w.length; i++) {
-        for (j=0; j<w[i].length; j++) {
+    for (var i=0; i<w.length; i++) {
+        for (var j=0; j<w[i].length; j++) {
             // -= ? += ?
-            w[i][j] -= alpha*x[j]*(sol[i]-y[i]);
+            w[i][j] += alpha*x[j]*(sol[i]-y[i]);
         }
     }
 }
 
 /** default parameters **/
 var size = 28, k = 10;
-var alpha = 0.01; // learning rate
+var alpha = 0.1; // learning rate
 var i,j;
 var w1 = getW(size*size,k);
 var b1 = getB(k);
+var sizeTraining = 8000, sizeTest = 2000;
 
+var set = mnist.set(sizeTraining, sizeTest);
 
-var answer = 1;
-var trainNum = 700;
+var trainingSet = set.training;
+var testSet = set.test;
+sizeTest = testSet.length
+console.log(sizeTest);
 
-for (i=0; i<10; i++) {
-    for (j=0; j<trainNum; j++) {
-        train(j, i, w1, b1);
-    }
+// DO TRAINING
+for (i=0; i<sizeTraining; i++) {
+    var x = trainingSet[i].input;
+    var sol = trainingSet[i].output;
+    train(sol, x, w1, b1);
 }
-var x = mn(trainNum+1, answer);
-var y = model(x, w1, b1);
 
-function maxIdx (y) {
-    var max = -1, idx = -1;
-    for (var i=0; i<y.length; i++) {
-        if (max < y[i]) {
-            max = y[i];
-            idx = i;
-        }
+function test (sizeTest) {
+    var x, answer, y, cnt = 0;
+    for (var i=0; i<sizeTest; i++) {
+        x = testSet[i].input;
+        answer = testSet[i].output;
+        y = model(x, w1, b1);
+        if (maxIdx(y) === maxIdx(answer))
+            cnt++;
     }
-    return idx;
+    return cnt/sizeTest;
 }
-alert(maxIdx(y) + ' with ' + y[maxIdx(y)] + ' where answer is ' + answer);
-console.log(y);
+var acuracy = test(sizeTest);
+alert('acurace is ' + Math.round(acuracy*100) +'% with ' + sizeTest + ' validation sets');
