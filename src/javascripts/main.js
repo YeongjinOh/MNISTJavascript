@@ -2,8 +2,6 @@
 
 var size = 28, n = size * size, k = 10;
 var alpha = 0.1; // learning rate
-var w1 = getW(size * size, k);
-var b1 = getB(k);
 
 // divide all dataset into traing and test sets
 var sizeTraining = 8000, sizeTest = 2000, batch = 100;
@@ -34,6 +32,8 @@ var timeStep = 500, rep = 10, each = 100;
 
 var train = function () {
     $('#status').text('Loading...');
+    w1 = getW(size * size, k);
+    b1 = getB(k);
     for (var j = 0; j <= rep; j++) {
         (function (i) {
             setTimeout(function () {
