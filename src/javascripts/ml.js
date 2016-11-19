@@ -73,9 +73,19 @@ function sigmoid_prime(z) {
 }
 
 function softmax (y) {
-    var res = new Array(10);
+    var res = new Array(y.length);
+    // find max
+    var max=y[0];
+    for (var i=1; i<y.length; i++) {
+        if (max < y[i]) {
+            max = y[i];
+        }
+    }
+    for (i=0; i<y.length; i++) {
+        y[i] -= max;
+    }
     var sum = 0;
-    for (var i=0; i<10; i++) {
+    for (i=0; i<y.length; i++) {
         res[i] = Math.exp(y[i]);
         sum += res[i];
     }
@@ -87,7 +97,7 @@ function softmax (y) {
 
 // from given x and w, return y
 function model (x, w, b) {
-    var y = new Array(10);
+    var y = new Array(b.length);
     for (var i=0; i<w.length; i++) {
         y[i] = b[i];
         for (var j=0; j<w[i].length; j++) {
@@ -120,7 +130,7 @@ function trainAll (sizeTraining, w, b) {
 }
 function trainBatch (batch, w, b, append) {
     var x, y, sol;
-    var dw = getW(size*size,10,0);
+    var dw = getW(w[0].length,w.length,0);
     var start = Math.floor(Math.random()*(trainingSet.length-batch));
     // shuffle before training
     trainingSet.shuffle();

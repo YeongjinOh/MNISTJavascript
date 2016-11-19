@@ -6,7 +6,10 @@
 </head>
 <body>
     <div id='wrapper' style="margin:100px;">
-        <h2> MNIST dataset training using JavaScript <span style="color:gray;font-size:18px;">(Made by YJ)</span></h2>
+        <div>
+            <h2 style="display:inline"> MNIST dataset training using JavaScript </h2>
+            <button id="trainbutton" style="margin-left:20px">Train</button>
+        </div>
         <table style="border-collapse:collapse">
             <thead>
                 <tr id="digits" style="height:30px"></tr>
@@ -16,7 +19,7 @@
                 <tr id="answer"></tr>
             </tbody>
         </table>
-        <h3 id="status" style="margin:10px">Loading...</h3>
+        <h3 id="status" style="margin:10px"></h3>
 
         <p>Current Accuracy is <span id="acuracy">0</span>%</p>
     </div>
